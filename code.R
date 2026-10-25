@@ -173,3 +173,47 @@ trend_plot <- ggplot(trend, aes(year, share, colour = measure)) +
         strip.text = element_text(face = "bold", hjust = 0, size = 12))
 
 ggsave(file.path("figures", "own_vs_rent.png"), trend_plot, bg = "white", width = 11, height = 6)
+
+# Figure own_cost_drivers ----
+# Exact log decomposition: own_to_income is proportional to price * payment_factor(rate) / income,
+# so its log change is the sum of a price, a rate and an income term. Each term's share of the
+# log change is applied to the change in percentage points, so the bars add up to the net change.
+drivers <- index %>%
+  filter(!is.na(own_to_income), year %in% c(2016, 2021, latest_year)) %>%
+  group_by(area) %>%
+  arrange(year, .by_group = TRUE) %>%
+  mutate(period = paste0(lag(year), " to ", year),
+         total = 100 * (own_to_income - lag(own_to_income)),
+         log_total = log(own_to_income / lag(own_to_income)),
+         `House price` = log(price / lag(price)),
+         `Mortgage rate` = log(payment_factor(rate) / payment_factor(lag(rate))),
+         `Family income` = -log(income / lag(income))) %>%
+  ungroup() %>%
+  filter(!is.na(total)) %>%
+  pivot_longer(c(`House price`, `Mortgage rate`, `Family income`), names_to = "driver", values_to = "log_part") %>%
+  mutate(points = total * log_part / log_total,
+         driver = factor(driver, levels = c("House price", "Mortgage rate", "Family income")),
+         area = factor(area, levels = rev(unname(districts))))
+
+# The three parts should add up to the net change
+stopifnot(all(abs(tapply(drivers$points, paste(drivers$area, drivers$period), sum) -
+                    tapply(drivers$total, paste(drivers$area, drivers$period), mean)) < 1e-9))
+
+drivers_plot <- ggplot(drivers, aes(points, area)) +
+  geom_vline(xintercept = 0, colour = muted) +
+  geom_col(aes(fill = driver), width = 0.6) +
+  geom_point(data = distinct(drivers, area, period, total), aes(total), size = 3, colour = ink) +
+  facet_wrap(~period, nrow = 1) +
+  scale_fill_manual(values = c(orange, blue, grey)) +
+  scale_x_continuous(labels = scales::label_number(suffix = " pts")) +
+  labs(title = sprintf("Prices pushed ownership costs up until 2021; interest rates did from 2021 to %d", latest_year),
+       subtitle = "Change in the mortgage payment on a median-priced home, in percentage points of median family income (black dot), split by cause",
+       x = NULL, y = NULL,
+       caption = paste0("Each bar is that factor's share of the change in logs; the three add up to the net change. Rising income lowers the share.\n",
+                        "Source: ", statcan_note, ", 34-10-0145-01; BC Property Transfer Tax Data.")) +
+  theme_index +
+  theme(panel.spacing = unit(1.5, "lines"),
+        panel.grid.major.y = element_blank(),
+        strip.text = element_text(face = "bold", hjust = 0, size = 12))
+
+ggsave(file.path("figures", "own_cost_drivers.png"), drivers_plot, bg = "white", width = 11, height = 4.5)

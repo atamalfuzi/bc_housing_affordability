@@ -6,6 +6,8 @@ An independent look at how much rent and mortgage payments take out of family in
 
 ![Mortgage payment vs rent as a share of family income, 2016-2023](figures/own_vs_rent.png)
 
+![What drove the change in ownership costs, 2016-2021 and 2021-2023](figures/own_cost_drivers.png)
+
 ## What it measures
 
 **Rent-to-income** (25 census metropolitan areas and agglomerations, 2008 onward):
@@ -18,12 +20,15 @@ An independent look at how much rent and mortgage payments take out of family in
 
 The mortgage is 80% of the median sale price (20% down), amortized over 25 years at that year's average 5-year conventional rate, with Canadian semi-annual compounding. The series start where the data do: 2008 is the first year with income data for every smaller city, and the property transfer data start in 2016.
 
+**What drove the change in ownership cost.** The ownership ratio is proportional to price × payment factor(rate) ÷ income, so its change in logs splits exactly into a house-price, a mortgage-rate and an income part. Each part's share of the log change is applied to the change in percentage points, so the three bars add up to the net change.
+
 The full table is written to [`output/affordability_index.csv`](output/affordability_index.csv).
 
 ## What it shows (2023 data)
 
 - Rent takes a bigger share of the median family's income than in 2008 in 23 of 25 areas. Vancouver is highest at 24%, up from 20%. Only Fort St. John and Dawson Creek moved the other way.
 - Owning was already more expensive than renting, and the 2022–2023 rate increases widened the gap: the payment on a median-priced home went from about 38% to 50% of the median family's income in Vancouver, and from about 30% to over 40% in Victoria and Kelowna.
+- The two periods had different causes. From 2016 to 2021, higher prices added 11 to 12 points in all three cities, and rising incomes took back half to two thirds of that. From 2021 to 2023, higher mortgage rates added 10 to 12 points, most of the rise in each city.
 
 ## Limits
 
