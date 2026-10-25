@@ -1,6 +1,6 @@
 # bc_housing_affordability
 
-A simple housing affordability index for British Columbia's cities, built entirely from open data. It asks one question two ways: how much of a typical family's income goes to housing if they rent, and if they buy?
+An independent look at how much rent and mortgage payments take out of family income in British Columbia's cities, built entirely from open data. It asks one question two ways: how much of a typical family's income goes to housing if they rent, and if they buy?
 
 ![Rent as a share of family income, 2008 and 2023](figures/rent_to_income.png)
 
@@ -33,7 +33,7 @@ The full table is written to [`output/affordability_index.csv`](output/affordabi
 - **Prices are approximate.** The price is the median value of all market sales in the regional district (about 96% residential), and the annual figure is the sales-weighted average of the monthly medians. Metro Vancouver, Capital and Central Okanagan regional districts stand in for the Vancouver, Victoria and Kelowna metro areas.
 - **One rate for everyone.** The 5-year conventional rate is a benchmark; borrowers' actual rates vary.
 - **Small markets are noisy.** The rental survey covers few units in small cities, so their averages can swing from year to year (Williams Lake's 2023 jump is one example). Boundaries also differ slightly between the rent data (2011 census areas) and the income data (2016 and 2021 areas).
-- **Income data lag.** The index ends with the latest year of family income data (2023), even though rents and prices are published sooner.
+- **Income data lag.** Both series end with the latest year of family income data (2023), even though rents and prices are published sooner.
 
 ## Data
 
@@ -59,7 +59,7 @@ install.packages(c("dplyr", "tidyr", "readr", "ggplot2", "jsonlite", "scales"))
 source("code.R")
 ```
 
-Run it from the repository folder (opening `bc_housing_affordability.Rproj` does this). It downloads about 4 MB and writes the charts to `figures/` and the index to `output/`. Statistics Canada's site is sometimes down for weekend maintenance; the script stops with a message if so.
+Run it from the repository folder (opening `bc_housing_affordability.Rproj` does this). It downloads about 4 MB and writes the charts to `figures/` and the table to `output/`. Statistics Canada's site is sometimes down for weekend maintenance; the script stops with a message if so.
 
 ## License
 
