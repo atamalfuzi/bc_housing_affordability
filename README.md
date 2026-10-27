@@ -2,6 +2,8 @@
 
 An independent look at how much rent and mortgage payments take out of family income in British Columbia's cities, built entirely from open data. It asks one question two ways: how much of a typical family's income goes to housing if they rent, and if they buy?
 
+> **Personal project.** This is my own analysis of publicly available data. It is not associated with my work for any current or past employer and does not represent their views.
+
 ![Rent as a share of family income, 2008 and 2023](figures/rent_to_income.png)
 
 ![Mortgage payment vs rent as a share of family income, 2016-2023](figures/own_vs_rent.png)
