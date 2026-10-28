@@ -88,12 +88,10 @@ latest_year <- max(index$year)
 stopifnot(c("Vancouver", "Victoria", "Kelowna", "Abbotsford-Mission", "Kamloops", "Nanaimo", "Chilliwack", "Prince George") %in% index$area,
           sum(!is.na(index$own_to_income)) == 3 * (latest_year - 2016 + 1))
 
-dir.create("output", showWarnings = FALSE)
 write_csv(index %>% mutate(across(c(rent_to_income, rate, own_to_income), \(x) round(x, 4)), price = round(price)),
           file.path("output", "affordability_index.csv"))
 
 # Figures ----
-dir.create("figures", showWarnings = FALSE)
 ink <- "#0b0b0b"
 muted <- "#52514e"
 blue <- "#2a78d6"
