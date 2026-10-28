@@ -59,7 +59,7 @@ price <- bind_rows(lapply(2016:max(income$year), transfer_year)) %>%
 
 stopifnot(all(price$months == 12))
 
-# Index ----
+# Ratios ----
 # Monthly payment per dollar borrowed: 25-year amortization, Canadian semi-annual compounding
 payment_factor <- function(rate, years = 25) {
   j <- (1 + rate / 2)^(1 / 6) - 1
@@ -69,7 +69,7 @@ payment_factor <- function(rate, years = 25) {
 base_year <- 2008  # first year with income data for every census agglomeration
 down_payment <- 0.2
 
-index <- income %>%
+ratios <- income %>%
   inner_join(rent, by = c("year", "area")) %>%
   left_join(price, by = c("year", "area")) %>%
   left_join(rate, by = "year") %>%
@@ -81,14 +81,14 @@ index <- income %>%
   select(area, year, income, rent, rent_to_income, price, rate, own_to_income) %>%
   arrange(area, year)
 
-latest_year <- max(index$year)
+latest_year <- max(ratios$year)
 
 # All eight BC census metropolitan areas should be here, and Vancouver, Victoria and Kelowna
 # should have an ownership cost for every year from 2016
-stopifnot(c("Vancouver", "Victoria", "Kelowna", "Abbotsford-Mission", "Kamloops", "Nanaimo", "Chilliwack", "Prince George") %in% index$area,
-          sum(!is.na(index$own_to_income)) == 3 * (latest_year - 2016 + 1))
+stopifnot(c("Vancouver", "Victoria", "Kelowna", "Abbotsford-Mission", "Kamloops", "Nanaimo", "Chilliwack", "Prince George") %in% ratios$area,
+          sum(!is.na(ratios$own_to_income)) == 3 * (latest_year - 2016 + 1))
 
-write_csv(index %>% mutate(across(c(rent_to_income, rate, own_to_income), \(x) round(x, 4)), price = round(price)),
+write_csv(ratios %>% mutate(across(c(rent_to_income, rate, own_to_income), \(x) round(x, 4)), price = round(price)),
           file.path("output", "affordability_index.csv"))
 
 # Figures ----
@@ -98,7 +98,7 @@ blue <- "#2a78d6"
 orange <- "#eb6834"
 grey <- "#a8a7a2"
 
-theme_index <- theme_minimal(base_size = 13) +
+theme_chart <- theme_minimal(base_size = 13) +
   theme(text = element_text(colour = ink),
         axis.text = element_text(colour = muted),
         plot.title = element_text(face = "bold"),
@@ -116,7 +116,7 @@ statcan_note <- "Statistics Canada tables 11-10-0009-01, 34-10-0133-01"
 
 # Figure rent_to_income ----
 # Rent-to-income ratio in the base and latest year, for every area with both
-dumbbell <- index %>%
+dumbbell <- ratios %>%
   filter(year %in% c(base_year, latest_year)) %>%
   group_by(area) %>%
   filter(n() == 2) %>%
@@ -138,14 +138,14 @@ rent_plot <- ggplot(dumbbell, aes(rent_to_income, area)) +
        subtitle = sprintf("Average two-bedroom rent as a share of median census family income, %d and %d", base_year, latest_year),
        x = NULL, y = NULL,
        caption = paste0("Rent: October average in purpose-built rental apartments and row houses (CMHC), times 12.\nSource: ", statcan_note, ".")) +
-  theme_index +
+  theme_chart +
   theme(panel.grid.major.y = element_blank())
 
 ggsave(file.path("figures", "rent_to_income.png"), rent_plot, bg = "white", width = 9, height = 9)
 
 # Figure own_vs_rent ----
 # Mortgage payment on a median-priced home vs two-bedroom rent, as a share of income
-trend <- index %>%
+trend <- ratios %>%
   filter(!is.na(own_to_income)) %>%
   pivot_longer(c(own_to_income, rent_to_income), names_to = "measure", values_to = "share") %>%
   mutate(measure = recode(measure,
@@ -166,7 +166,7 @@ trend_plot <- ggplot(trend, aes(year, share, colour = measure)) +
        caption = paste0("Mortgage: 20% down, 25-year amortization, CMHC conventional 5-year rate (yearly average).\n",
                         "Price: median value of market sales in the regional district (Metro Vancouver, Capital, Central Okanagan).\n",
                         "Source: ", statcan_note, ", 34-10-0145-01; BC Property Transfer Tax Data.")) +
-  theme_index +
+  theme_chart +
   theme(panel.spacing = unit(1.5, "lines"),
         strip.text = element_text(face = "bold", hjust = 0, size = 12))
 
@@ -176,7 +176,7 @@ ggsave(file.path("figures", "own_vs_rent.png"), trend_plot, bg = "white", width 
 # Exact log decomposition: own_to_income is proportional to price * payment_factor(rate) / income,
 # so its log change is the sum of a price, a rate and an income term. Each term's share of the
 # log change is applied to the change in percentage points, so the bars add up to the net change.
-drivers <- index %>%
+drivers <- ratios %>%
   filter(!is.na(own_to_income), year %in% c(2016, 2021, latest_year)) %>%
   group_by(area) %>%
   arrange(year, .by_group = TRUE) %>%
@@ -209,7 +209,7 @@ drivers_plot <- ggplot(drivers, aes(points, area)) +
        x = NULL, y = NULL,
        caption = paste0("Each bar is that factor's share of the change in logs; the three add up to the net change. Rising income lowers the share.\n",
                         "Source: ", statcan_note, ", 34-10-0145-01; BC Property Transfer Tax Data.")) +
-  theme_index +
+  theme_chart +
   theme(panel.spacing = unit(1.5, "lines"),
         panel.grid.major.y = element_blank(),
         strip.text = element_text(face = "bold", hjust = 0, size = 12))
