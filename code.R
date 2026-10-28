@@ -206,7 +206,7 @@ drivers_plot <- ggplot(drivers, aes(points, area)) +
   scale_fill_manual(values = c(orange, blue, grey)) +
   scale_x_continuous(labels = scales::label_number(suffix = " pts")) +
   labs(title = sprintf("Prices pushed ownership costs up until 2021; interest rates did from 2021 to %d", latest_year),
-       subtitle = "Change in the mortgage payment on a median-priced home, in percentage points of median family income (black dot), split by cause",
+       subtitle = "Change in the mortgage payment on a median-priced home, in percentage points of median family income. The dot is the net change.",
        x = NULL, y = NULL,
        caption = paste0("Each bar is that factor's share of the change in logs; the three add up to the net change. Rising income lowers the share.\n",
                         "Source: ", statcan_note, ", 34-10-0145-01; BC Property Transfer Tax Data.")) +
