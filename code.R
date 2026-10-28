@@ -1,4 +1,4 @@
-# Loading Required Libraries ----
+# Packages ----
 library(dplyr)
 library(tidyr)
 library(readr)
@@ -7,8 +7,6 @@ library(ggplot2)
 options(timeout = 300)
 
 # Data ----
-# Statistics Canada tables (Statistics Canada Open Licence). Rents and mortgage rates are
-# CMHC series published by Statistics Canada.
 statcan_table <- function(pid) {
   zip <- file.path(tempdir(), paste0(pid, ".zip"))
   download.file(sprintf("https://www150.statcan.gc.ca/n1/tbl/csv/%s-eng.zip", pid), zip, mode = "wb", quiet = TRUE)
@@ -85,7 +83,8 @@ index <- income %>%
 
 latest_year <- max(index$year)
 
-# Every census metropolitan area should be in the index, with an ownership series from 2016 for the three above
+# All eight BC census metropolitan areas should be here, and Vancouver, Victoria and Kelowna
+# should have an ownership cost for every year from 2016
 stopifnot(c("Vancouver", "Victoria", "Kelowna", "Abbotsford-Mission", "Kamloops", "Nanaimo", "Chilliwack", "Prince George") %in% index$area,
           sum(!is.na(index$own_to_income)) == 3 * (latest_year - 2016 + 1))
 
@@ -124,6 +123,7 @@ dumbbell <- index %>%
   group_by(area) %>%
   filter(n() == 2) %>%
   ungroup() %>%
+  # sort areas by their latest-year ratio
   mutate(area = reorder(area, rent_to_income * (year == latest_year), sum),
          year = factor(year))
 
