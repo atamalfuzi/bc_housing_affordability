@@ -48,6 +48,9 @@ transfer_year <- function(year) {
   ))$result$resources
   url <- resources$url[tolower(resources$format) == "csv" &
                          grepl("regional.district.monthly", resources$name, ignore.case = TRUE)]
+  if (length(url) != 1) {
+    stop("Expected one regional district CSV in the ", year, " property transfer data, found ", length(url), ".")
+  }
   read_csv(url, col_types = cols_only(RegionalDistrict = "c", tot_mkt_trans = "d", md_FMV = "d")) %>%
     mutate(year = year, district = toupper(sub("^[0-9]+ - ", "", RegionalDistrict)))
 }
