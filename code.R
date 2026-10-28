@@ -21,7 +21,8 @@ income <- statcan_table("11100009") %>%
   filter(grepl("British Columbia", GEO),
          grepl("S05", DGUID),  # census metropolitan areas and agglomerations only
          `Family characteristics` == "Median total income, all families") %>%
-  transmute(year = as.integer(REF_DATE), area = sub(", British Columbia", "", GEO), income = VALUE)
+  transmute(year = as.integer(REF_DATE), area = sub(", British Columbia", "", GEO), income = VALUE) %>%
+  filter(year <= 2023)  # the README describes 2023; raise this when you update it
 
 # 34-10-0133-01 CMHC average rents (October survey of purpose-built rental apartments and row houses)
 rent <- statcan_table("34100133") %>%
