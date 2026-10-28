@@ -1,6 +1,6 @@
-# bc_housing_affordability
+# Rent and mortgage burden in BC cities
 
-An independent look at how much rent and mortgage payments take out of family income in British Columbia's cities, built entirely from open data. It asks one question two ways: how much of a typical family's income goes to housing if they rent, and if they buy?
+How much of a typical family's income goes to rent, or to a mortgage, in British Columbia's cities? This R script works it out from open data alone.
 
 > **Personal project.** This is my own analysis of publicly available data. It is not associated with my work for any current or past employer and does not represent their views.
 
@@ -20,7 +20,7 @@ An independent look at how much rent and mortgage payments take out of family in
 
 > 12 × monthly mortgage payment ÷ median total income of census families
 
-The mortgage is 80% of the median sale price (20% down), amortized over 25 years at that year's average 5-year conventional rate, with Canadian semi-annual compounding. The series start where the data do: 2008 is the first year with income data for every smaller city, and the property transfer data start in 2016.
+The mortgage is 80% of the median sale price (20% down), amortized over 25 years at that year's average 5-year conventional rate, with Canadian semi-annual compounding. Rent ratios start in 2008, the first year with income data for every smaller city. Ownership ratios start in 2016, when the property transfer data begin.
 
 **What drove the change in ownership cost.** The ownership ratio is proportional to price × payment factor(rate) ÷ income, so its change in logs splits exactly into a house-price, a mortgage-rate and an income part. Each part's share of the log change is applied to the change in percentage points, so the three bars add up to the net change.
 
@@ -34,13 +34,13 @@ The full table is written to [`output/affordability_index.csv`](output/affordabi
 
 ## Limits
 
-- **Income is for all families, not renters or buyers.** Renter families typically earn less than the median, so their actual rent burden is higher than shown. Single people are not in the measure at all.
-- **Rents are what sitting tenants pay** in purpose-built rental buildings (CMHC's October survey). Asking rents for vacant units, and rented condos or secondary suites, are often higher.
-- **Housing costs are partial.** Rent may or may not include utilities. The ownership cost leaves out property tax, insurance, strata fees and maintenance, and ignores the hurdle of saving a down payment.
-- **Prices are approximate.** The price is the median value of all market sales in the regional district (about 96% residential), and the annual figure is the sales-weighted average of the monthly medians. Metro Vancouver, Capital and Central Okanagan regional districts stand in for the Vancouver, Victoria and Kelowna metro areas.
-- **One rate for everyone.** The 5-year conventional rate is a benchmark; borrowers' actual rates vary.
-- **Small markets are noisy.** The rental survey covers few units in small cities, so their averages can swing from year to year (Williams Lake's 2023 jump is one example). Boundaries also differ slightly between the rent data (2011 census areas) and the income data (2016 and 2021 areas).
-- **Income data lag.** Both series end with the latest year of family income data (2023), even though rents and prices are published sooner.
+- Income is for all families, not renters or buyers. Renter families typically earn less than the median, so their actual rent burden is higher than shown. Single people are not in the measure at all.
+- Rents are what sitting tenants pay in purpose-built rental buildings (CMHC's October survey). Asking rents for vacant units, and rented condos or secondary suites, are often higher.
+- Housing costs are partial. Rent may or may not include utilities. The ownership cost leaves out property tax, insurance, strata fees and maintenance, and ignores the hurdle of saving a down payment.
+- Prices are approximate. The price is the median value of all market sales in the regional district (about 96% residential), and the annual figure is the sales-weighted average of the monthly medians. Metro Vancouver, Capital and Central Okanagan regional districts stand in for the Vancouver, Victoria and Kelowna metro areas.
+- One rate for everyone. The 5-year conventional rate is a benchmark; borrowers' actual rates vary.
+- Small markets are noisy. The rental survey covers few units in small cities, so their averages can swing from year to year (Williams Lake's 2023 jump is one example). Boundaries also differ slightly between the rent data (2011 census areas) and the income data (2016 and 2021 areas).
+- Income data lag. Both series end with the latest year of family income data (2023), even though rents and prices are published sooner.
 
 ## Data
 
